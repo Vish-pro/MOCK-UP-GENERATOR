@@ -15,7 +15,7 @@ def create_test_image():
 def test_analyze():
     img_bytes = create_test_image()
     files = {"file": ("test.jpg", img_bytes, "image/jpeg")}
-    response = client.post("/analyze", files=files)
+    response = client.post("/api/analyze", files=files)
     assert response.status_code == 200
     data = response.json()
     assert "garment_type" in data
@@ -29,9 +29,10 @@ def test_generate():
         "dominant_color_hex": "#FF0000",
         "image_base64": f"data:image/jpeg;base64,{b64_img}"
     }
-    response = client.post("/generate", json=payload)
+    response = client.post("/api/generate", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 12
     assert "image_base64" in data[0]
-    assert "http" in data[0]["image_base64"]
+    # Check if it is a base64 data string now
+    assert data[0]["image_base64"].startswith("data:image/jpeg;base64,")

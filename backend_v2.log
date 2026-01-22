@@ -18,3 +18,7 @@ INFO:     127.0.0.1:43440 - "GET /static/48847b35-dad6-4743-90a7-995e11b0590e.jp
 INFO:     127.0.0.1:43428 - "GET /static/13645ed8-9052-4c13-98bb-7f5990d872f3.jpg HTTP/1.1" 200 OK
 INFO:     127.0.0.1:43466 - "GET /static/0565e072-d7cb-47b6-9a13-9e300318d36f.jpg HTTP/1.1" 200 OK
 INFO:     127.0.0.1:43472 - "GET /static/b92ca165-219f-492c-ab8a-76d32836f95a.jpg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [4240]

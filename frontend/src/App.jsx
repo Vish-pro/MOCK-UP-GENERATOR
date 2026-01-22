@@ -29,7 +29,8 @@ function App() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const analysisResponse = await axios.post('http://localhost:8000/analyze', formData, {
+      // Use relative path for production (and proxy in dev)
+      const analysisResponse = await axios.post('/api/analyze', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -50,7 +51,7 @@ function App() {
             image_base64: base64Image
         };
 
-        const generationResponse = await axios.post('http://localhost:8000/generate', generationRequest);
+        const generationResponse = await axios.post('/api/generate', generationRequest);
         setMockups(generationResponse.data);
         setLoading(false);
         setStep('results');
@@ -69,7 +70,6 @@ function App() {
       const link = document.createElement('a');
       link.href = mockup.image_base64;
       link.download = `mockup_${mockup.category.substring(0, 10)}_${mockup.view_name.replace(" ", "_")}.jpg`;
-      link.target = "_blank"; // Important for static file downloads sometimes
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -7,3 +7,7 @@
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
+4:58:10 PM [vite] (client) hmr update /src/App.jsx
+4:58:17 PM [vite] vite.config.js changed, restarting server...
+4:58:17 PM [vite] vite.config.js changed, restarting server...
+4:58:18 PM [vite] server restarted.
