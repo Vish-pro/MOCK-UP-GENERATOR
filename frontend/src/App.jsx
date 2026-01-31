@@ -3,59 +3,81 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [file, setFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [frontFile, setFrontFile] = useState(null);
+  const [backFile, setBackFile] = useState(null);
+  const [frontPreview, setFrontPreview] = useState(null);
+  const [backPreview, setBackPreview] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [mockups, setMockups] = useState([]);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState('upload'); // upload, processing, results
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, side) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      setImagePreview(URL.createObjectURL(selectedFile));
+      if (side === 'front') {
+        setFrontFile(selectedFile);
+        setFrontPreview(URL.createObjectURL(selectedFile));
+      } else {
+        setBackFile(selectedFile);
+        setBackPreview(URL.createObjectURL(selectedFile));
+      }
     }
   };
 
   const handleUpload = async () => {
-    if (!file) return;
+    if (!frontFile) {
+      alert("Please upload at least the front image.");
+      return;
+    }
 
     setLoading(true);
     setStep('processing');
 
     try {
-      // 1. Analyze Image
+      // 1. Analyze Front Image
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', frontFile);
 
-      // Use relative path for production (and proxy in dev)
       const analysisResponse = await axios.post('/api/analyze', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       setAnalysis(analysisResponse.data);
 
-      // 2. Generate Mockups
-      // Convert file to base64 for the generation request
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const base64Image = reader.result;
-
-        const generationRequest = {
-            garment_type: analysisResponse.data.garment_type,
-            dominant_color_hex: analysisResponse.data.dominant_color_hex,
-            image_base64: base64Image
-        };
-
-        const generationResponse = await axios.post('/api/generate', generationRequest);
-        setMockups(generationResponse.data);
-        setLoading(false);
-        setStep('results');
+      // 2. Read images as base64
+      const readFileAsBase64 = (file) => {
+        return new Promise((resolve) => {
+          if (!file) {
+            resolve(null);
+            return;
+          }
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = () => resolve(reader.result);
+        });
       };
+
+      const frontBase64 = await readFileAsBase64(frontFile);
+      const backBase64 = await readFileAsBase64(backFile);
+
+      // 3. Generate Mockups
+      const generationRequest = {
+        garment_type: analysisResponse.data.garment_type,
+        dominant_color_hex: analysisResponse.data.dominant_color_hex,
+        front_image_base64: frontBase64,
+        back_image_base64: backBase64
+      };
+
+      const generationResponse = await axios.post('/api/generate', generationRequest);
+      setMockups(generationResponse.data.mockups);
+      if (generationResponse.data.ai_analysis) {
+        console.log("Gemini Suggestions:", generationResponse.data.ai_analysis);
+        // Optionally store analysis in state to display to user
+        setAnalysis(prev => ({ ...prev, ai_analysis: generationResponse.data.ai_analysis }));
+      }
+      setLoading(false);
+      setStep('results');
 
     } catch (error) {
       console.error("Error processing image:", error);
@@ -86,26 +108,54 @@ function App() {
       <main className="app-main">
         {step === 'upload' && (
           <div className="upload-section">
-            <div className="upload-box">
-              <input
-                type="file"
-                id="file-upload"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="file-input"
-              />
-              <label htmlFor="file-upload" className="file-label">
-                {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" className="preview-image" />
-                ) : (
-                  <div className="upload-placeholder">
-                    <span>+</span>
-                    <p>Upload Product Image</p>
-                  </div>
-                )}
-              </label>
+            <div className="upload-container-row">
+              <div className="upload-group">
+                <h3>Front View</h3>
+                <div className="upload-box">
+                  <input
+                    type="file"
+                    id="front-upload"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, 'front')}
+                    className="file-input"
+                  />
+                  <label htmlFor="front-upload" className="file-label">
+                    {frontPreview ? (
+                      <img src={frontPreview} alt="Front Preview" className="preview-image" />
+                    ) : (
+                      <div className="upload-placeholder">
+                        <span>+</span>
+                        <p>Upload Front</p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              <div className="upload-group">
+                <h3>Back View</h3>
+                <div className="upload-box">
+                  <input
+                    type="file"
+                    id="back-upload"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, 'back')}
+                    className="file-input"
+                  />
+                  <label htmlFor="back-upload" className="file-label">
+                    {backPreview ? (
+                      <img src={backPreview} alt="Back Preview" className="preview-image" />
+                    ) : (
+                      <div className="upload-placeholder">
+                        <span>+</span>
+                        <p>Upload Back (Optional)</p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
             </div>
-            {file && (
+            {frontFile && (
               <button className="primary-button" onClick={handleUpload}>
                 Start Studio Workflow
               </button>
@@ -132,13 +182,19 @@ function App() {
               <div className="info-card">
                 <h3>Dominant Color</h3>
                 <div className="color-swatch-container">
-                   <div
-                     className="color-swatch"
-                     style={{ backgroundColor: analysis.dominant_color_hex }}
-                   ></div>
-                   <span>{analysis.dominant_color_hex}</span>
+                  <div
+                    className="color-swatch"
+                    style={{ backgroundColor: analysis.dominant_color_hex }}
+                  ></div>
+                  <span>{analysis.dominant_color_hex}</span>
                 </div>
               </div>
+              {analysis.ai_analysis && (
+                <div className="info-card wide ai-card">
+                  <h3>AI Insights & Styling</h3>
+                  <p className="ai-text">{analysis.ai_analysis}</p>
+                </div>
+              )}
               <button className="secondary-button" onClick={() => setStep('upload')}>Start New</button>
               <button className="primary-button" onClick={downloadAll}>Download All 4K Assets</button>
             </div>
