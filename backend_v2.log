@@ -1,0 +1,24 @@
+INFO:     Started server process [4240]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60308 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43474 - "POST /analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43474 - "OPTIONS /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43482 - "POST /generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43440 - "GET /static/e3e48454-1a86-43b9-a06f-7a044b13cc56.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43428 - "GET /static/88d08a8f-12fc-4e9d-a52d-51cdbcf9cdaf.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43456 - "GET /static/5940ea0d-6383-47ea-ba9f-0a49fc996773.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43466 - "GET /static/1c9d6a5b-4c10-4925-b18c-9d8905a027d7.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43478 - "GET /static/8853ec51-ca04-47cd-a6d6-2cf355c74296.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43472 - "GET /static/487ba4d4-221b-4e66-80c6-377ae22b8730.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43478 - "GET /static/ec9b7115-bf70-4c3f-b78f-3fe47d0d7c72.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43456 - "GET /static/aa010a9e-c359-4160-9c48-e5ee3f2b8168.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43440 - "GET /static/48847b35-dad6-4743-90a7-995e11b0590e.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43428 - "GET /static/13645ed8-9052-4c13-98bb-7f5990d872f3.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43466 - "GET /static/0565e072-d7cb-47b6-9a13-9e300318d36f.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43472 - "GET /static/b92ca165-219f-492c-ab8a-76d32836f95a.jpg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [4240]
