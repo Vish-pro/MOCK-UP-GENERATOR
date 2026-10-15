@@ -1,0 +1,22 @@
+# secrets
+.env
+*.env
+backend/.env
+client_secret_*.json
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# node
+node_modules/
+dist/
+
+# generated output / scratch
+backend/static/
+*.log
+output_images*.json
+payload.json
+b64_image.txt
+test_*.jpg
